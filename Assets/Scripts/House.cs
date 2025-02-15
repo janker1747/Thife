@@ -1,25 +1,26 @@
+using System;
 using UnityEngine;
 
 public class House : MonoBehaviour
 {
-    [SerializeField] private Alarm alarm;
-    [SerializeField] private Thief _thife;
+    [SerializeField] private Alarm _alarm;
+    public event Action<bool> OnAlarm;
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<Thief>())
         {
-            alarm.IncreaseVolume();
-            _thife.SetSignalingTriggered(true);
+            _alarm.IncreaseVolume();
+            OnAlarm?.Invoke(true);
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.GetComponent<Thief>())
         {
-            alarm.DecreaseVolume();
-            _thife.SetSignalingTriggered(false);
+            _alarm.DecreaseVolume();
+            OnAlarm?.Invoke(false);
         }
     }
 }

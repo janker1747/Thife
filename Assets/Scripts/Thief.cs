@@ -2,36 +2,47 @@ using UnityEngine;
 
 public class Thief : MonoBehaviour
 {
-    [SerializeField] private AudioSource _audioSource;
     [SerializeField] private float _speed = 4f;
     [SerializeField] private Transform[] _waypoints;
-    [SerializeField] private Transform _escapePosition;
+    [SerializeField] private Transform _escapePoint;
     [SerializeField] private float _minDistance = 1f;
-    private float _maxVolume = 1f;
+    [SerializeField] private House _house;
+
     private int _currentWaypointIndex = 0;
-    private bool _isEscaping = false;
     private bool _isSignalingTriggered = false;
+
+    private void OnEnable()
+    {
+        _house.OnAlarm += HandleAlarmStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        _house.OnAlarm -= HandleAlarmStateChanged;
+    }
 
     private void Update()
     {
-        if (_waypoints == null || _waypoints.Length == 0 || _escapePosition == null)
+        if (_waypoints == null || _waypoints.Length == 0)
             return;
 
-        if (_isSignalingTriggered && Mathf.Approximately(_audioSource.volume, _maxVolume))
+        if (_isSignalingTriggered == true)
         {
             Escape();
         }
         else
         {
-            Move();
+            Move();   
         }
     }
 
     private void Move()
     {
-        if (_isEscaping) return;
-
-        transform.position = Vector3.MoveTowards(transform.position, _waypoints[_currentWaypointIndex].position, _speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            _waypoints[_currentWaypointIndex].position,
+            _speed * Time.deltaTime
+        );
 
         if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex].position) < _minDistance)
         {
@@ -41,17 +52,23 @@ public class Thief : MonoBehaviour
 
     private void Escape()
     {
-        transform.position = Vector3.MoveTowards(transform.position, _escapePosition.position, _speed * Time.deltaTime);
+        Debug.Log("Thief is escaping!");
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            _escapePoint.position,
+            _speed * Time.deltaTime
+        );
 
-        if (Vector3.Distance(transform.position, _escapePosition.position) < _minDistance)
+        if (Vector3.Distance(transform.position, _escapePoint.position) < _minDistance)
         {
-            _isEscaping = false; 
-            _isSignalingTriggered = false;
+            Debug.Log("Вор сбежал!");
+            Destroy(gameObject);
         }
     }
 
-    public void SetSignalingTriggered(bool isTriggered)
+    private void HandleAlarmStateChanged(bool isAlarmTriggered)
     {
-        _isSignalingTriggered = isTriggered;
+        _isSignalingTriggered = isAlarmTriggered;
+        Debug.Log($"Thief detected alarm state change: {isAlarmTriggered}");
     }
 }
