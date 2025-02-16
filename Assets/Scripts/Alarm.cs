@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,8 +8,6 @@ public class Alarm : MonoBehaviour
     private float _targetVolume = 0f;
     private Coroutine _volumeChangeCoroutine;
 
-    public event Action<bool> OnAlarmStateChanged;
-
     private void Awake()
     {
         _audioSource.volume = 0f;
@@ -20,14 +17,12 @@ public class Alarm : MonoBehaviour
     public void IncreaseVolume()
     {
         _targetVolume = 1f;
-        OnAlarmStateChanged?.Invoke(true);
         StartVolumeChange();
     }
 
     public void DecreaseVolume()
     {
         _targetVolume = 0f;
-        OnAlarmStateChanged?.Invoke(false);
         StartVolumeChange();
     }
 
