@@ -6,7 +6,7 @@ public class House : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Thief>())
+        if (other.TryGetComponent<Thief>( out Thief thief))
         {
             _alarm.IncreaseVolume();
         }
@@ -14,7 +14,7 @@ public class House : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<Thief>())
+        if (other.TryGetComponent<Thief>(out Thief thief))
         {
             _alarm.DecreaseVolume();
         }

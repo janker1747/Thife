@@ -16,7 +16,7 @@ public class Thief : MonoBehaviour
             _speed * Time.deltaTime
         );
 
-        if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex].position) < _minDistance)
+        if ((transform.position - _waypoints[_currentWaypointIndex].position).sqrMagnitude < _minDistance * _minDistance)
         {
             _currentWaypointIndex = ++_currentWaypointIndex % _waypoints.Length;
         }
